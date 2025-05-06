@@ -7,6 +7,7 @@ import com.example.annotations.LogBefore;
 import com.example.dto.TaskDto;
 import com.example.model.Task;
 import com.example.repo.TaskRepo;
+import com.example.util.TaskMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +17,17 @@ import java.util.stream.Collectors;
 @Service
 public class TaskService {
     private final TaskRepo taskRepo;
+    private final TaskMapper taskMapper;
 
-    public TaskService(TaskRepo taskRepo) {
+    public TaskService(TaskRepo taskRepo, TaskMapper taskMapper) {
         this.taskRepo = taskRepo;
+        this.taskMapper = taskMapper;
     }
 
     @LogBefore
     public List<TaskDto> getAllTasks() {
         return taskRepo.findAll().stream()
-                .map(this::convertToDto)
+                .map(taskMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -33,15 +36,15 @@ public class TaskService {
     public TaskDto getTaskById(Long id) {
         Task task = taskRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
-        return convertToDto(task);
+        return taskMapper.toDto(task);
     }
 
     @LogAround
     @LogAfterReturning
     public TaskDto createTask(TaskDto taskDto) {
-        Task task = convertToEntity(taskDto);
+        Task task = taskMapper.toEntity(taskDto);
         Task savedTask = taskRepo.save(task);
-        return convertToDto(savedTask);
+        return taskMapper.toDto(savedTask);
     }
 
     @LogAfterReturning
@@ -55,7 +58,7 @@ public class TaskService {
         task.setUserId(taskDto.getUserId());
 
         Task updatedTask = taskRepo.save(task);
-        return convertToDto(updatedTask);
+        return taskMapper.toDto(updatedTask);
     }
 
     @LogAfterReturning
@@ -76,7 +79,7 @@ public class TaskService {
         }
 
         Task patchedTask = taskRepo.save(task);
-        return convertToDto(patchedTask);
+        return taskMapper.toDto(patchedTask);
     }
 
     @LogAround
@@ -87,21 +90,5 @@ public class TaskService {
         } else {
             throw new RuntimeException("Task not found with id: " + id);
         }
-    }
-
-    private TaskDto convertToDto(Task task) {
-        TaskDto dto = new TaskDto();
-        dto.setTitle(task.getTitle());
-        dto.setDescription(task.getDescription());
-        dto.setUserId(task.getUserId());
-        return dto;
-    }
-
-    private Task convertToEntity(TaskDto dto) {
-        Task task = new Task();
-        task.setTitle(dto.getTitle());
-        task.setDescription(dto.getDescription());
-        task.setUserId(dto.getUserId());
-        return task;
     }
 }
