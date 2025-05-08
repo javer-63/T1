@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 public class TaskService {
     private final TaskRepo taskRepo;
     private final TaskMapper taskMapper;
+    private final EmailService emailService;
 
-    public TaskService(TaskRepo taskRepo, TaskMapper taskMapper) {
+    public TaskService(TaskRepo taskRepo, TaskMapper taskMapper, EmailService emailService) {
         this.taskRepo = taskRepo;
         this.taskMapper = taskMapper;
+        this.emailService = emailService;
     }
 
     @LogBefore
@@ -56,8 +58,12 @@ public class TaskService {
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
         task.setUserId(taskDto.getUserId());
-
         Task updatedTask = taskRepo.save(task);
+
+        emailService.sendTaskUpdateNotification("Update",
+                "Task with id: " + id + " has been updated: Title: " + task.getTitle() +
+                        " Description: " + task.getDescription() + " User ID: " + task.getUserId());
+
         return taskMapper.toDto(updatedTask);
     }
 
@@ -77,8 +83,12 @@ public class TaskService {
         if (taskDto.getUserId() != null) {
             task.setUserId(taskDto.getUserId());
         }
-
         Task patchedTask = taskRepo.save(task);
+
+        emailService.sendTaskUpdateNotification("Patch",
+                "Task with id: " + id + " has been updated partly: Title: " + task.getTitle() +
+                        " Description: " + task.getDescription() + " User ID: " + task.getUserId());
+
         return taskMapper.toDto(patchedTask);
     }
 
