@@ -5,6 +5,7 @@ public class TaskDto {
     private String title;
     private String description;
     private Long userId;
+    private String status;
 
     public Long getId() {
         return id;
@@ -36,5 +37,13 @@ public class TaskDto {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
