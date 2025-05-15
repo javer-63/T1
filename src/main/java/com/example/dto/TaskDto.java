@@ -1,11 +1,13 @@
 package com.example.dto;
 
+import com.example.model.TaskStatus;
+
 public class TaskDto {
     private Long id;
     private String title;
     private String description;
     private Long userId;
-    private String status;
+    private TaskStatus status;
 
     public Long getId() {
         return id;
@@ -39,11 +41,11 @@ public class TaskDto {
         this.userId = userId;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 }

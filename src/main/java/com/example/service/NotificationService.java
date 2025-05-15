@@ -1,12 +1,15 @@
 package com.example.service;
 
 import com.example.dto.TaskDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NotificationService {
+    @Value("${spring.mail.notification-to}")
+    private String emailTo;
     private final JavaMailSender mailSender;
 
     public NotificationService(JavaMailSender mailSender) {
@@ -15,7 +18,7 @@ public class NotificationService {
 
     public void sendStatusChangeNotification(TaskDto taskDto) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("user@example.com");
+        message.setTo(emailTo);
         message.setSubject("Task Status Updated");
         message.setText(
                 "Task ID: " + taskDto.getId() + "\n" +
