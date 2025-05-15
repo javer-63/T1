@@ -5,6 +5,7 @@ import com.example.annotations.LogAfterThrowing;
 import com.example.annotations.LogAround;
 import com.example.annotations.LogBefore;
 import com.example.dto.TaskDto;
+import com.example.kafka.KafkaTaskProducer;
 import com.example.model.Task;
 import com.example.repo.TaskRepo;
 import com.example.util.TaskMapper;
@@ -18,10 +19,12 @@ import java.util.stream.Collectors;
 public class TaskService {
     private final TaskRepo taskRepo;
     private final TaskMapper taskMapper;
+    private final KafkaTaskProducer kafkaTaskProducer;
 
-    public TaskService(TaskRepo taskRepo, TaskMapper taskMapper) {
+    public TaskService(TaskRepo taskRepo, TaskMapper taskMapper, KafkaTaskProducer kafkaTaskProducer) {
         this.taskRepo = taskRepo;
         this.taskMapper = taskMapper;
+        this.kafkaTaskProducer = kafkaTaskProducer;
     }
 
     @LogBefore
@@ -56,8 +59,10 @@ public class TaskService {
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
         task.setUserId(taskDto.getUserId());
-
+        task.setStatus(taskDto.getStatus());
         Task updatedTask = taskRepo.save(task);
+        TaskDto updatedDto = taskMapper.toDto(updatedTask);
+        kafkaTaskProducer.sendTaskUpdate(updatedDto);
         return taskMapper.toDto(updatedTask);
     }
 
@@ -68,6 +73,7 @@ public class TaskService {
         Task task = taskRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
 
+        boolean statusChange = false;
         if (taskDto.getTitle() != null) {
             task.setTitle(taskDto.getTitle());
         }
@@ -77,8 +83,14 @@ public class TaskService {
         if (taskDto.getUserId() != null) {
             task.setUserId(taskDto.getUserId());
         }
-
+        if (taskDto.getStatus() != null) {
+            task.setStatus(taskDto.getStatus());
+            statusChange = true;
+        }
         Task patchedTask = taskRepo.save(task);
+        if (statusChange) {
+            kafkaTaskProducer.sendTaskUpdate(taskMapper.toDto(patchedTask));
+        }
         return taskMapper.toDto(patchedTask);
     }
 

@@ -13,15 +13,12 @@ public class Task {
     private String title;
     private String description;
     private Long userId;
+    private String status;
 
     public Long getId() {
         return id;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    
     public String getTitle() {
         return title;
     }
@@ -44,6 +41,14 @@ public class Task {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Task() {
