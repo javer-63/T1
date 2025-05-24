@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;
@@ -17,7 +17,11 @@ public class Task {
     public Long getId() {
         return id;
     }
-    
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -53,10 +57,11 @@ public class Task {
     public Task() {
     }
 
-    public Task(Long id, String title, String description, Long userId) {
+    public Task(Long id, String title, String description, Long userId, TaskStatus status) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.userId = userId;
+        this.status = status;
     }
 }
