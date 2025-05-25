@@ -1,5 +1,6 @@
 package com.example.kafka;
 
+import com.example.AbstractContainerTest;
 import com.example.dto.TaskDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
-public class KafkaTaskProducerSpringTest {
+public class KafkaTaskProducerSpringTest extends AbstractContainerTest {
 
     @MockBean
     private KafkaTemplate<String, TaskDto> kafkaTemplate;

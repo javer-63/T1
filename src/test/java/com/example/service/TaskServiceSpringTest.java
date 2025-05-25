@@ -27,7 +27,7 @@ public class TaskServiceSpringTest {
     @MockBean
     private TaskRepo taskRepo;
 
-    @MockBean
+    @Autowired
     private TaskMapper taskMapper;
 
     @Test
@@ -35,7 +35,6 @@ public class TaskServiceSpringTest {
     void getAllTasksTest() {
         Task task = getTestTask();
         List<Task> tasks = List.of(task);
-        taskRepo.save(task);
         when(taskRepo.findAll()).thenReturn(tasks);
         List<TaskDto> result = taskService.getAllTasks();
         assertNotNull(result);

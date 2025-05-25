@@ -12,7 +12,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: t36960484@gmail.com
-    password: whchtaznmrhcqslg
+    password: *
     properties:
       mail:
         smtp:
@@ -20,7 +20,6 @@ spring:
           starttls:
             enable: true
   kafka:
-    bootstrap-servers: localhost:9092
     topic: test-tasks
     consumer:
       group-id: task-group
