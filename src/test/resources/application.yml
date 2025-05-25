@@ -1,13 +1,12 @@
+
 spring:
-  application:
-    name: T1
   datasource:
-    url: jdbc:postgresql://localhost:5432/tasks
-    username: postgres
-    password: postgres
+    url: jdbc:tc:postgresql:13:///test_db
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
     notification-to: user@example.com
     host: smtp.gmail.com
@@ -22,6 +21,8 @@ spring:
             enable: true
   kafka:
     bootstrap-servers: localhost:9092
-    topic: task-updates
+    topic: test-tasks
     consumer:
       group-id: task-group
+server:
+  port: 8089

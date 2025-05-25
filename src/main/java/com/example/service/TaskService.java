@@ -45,6 +45,9 @@ public class TaskService {
     @LogAround
     @LogAfterReturning
     public TaskDto createTask(TaskDto taskDto) {
+        if (taskDto == null) {
+            throw new IllegalArgumentException("TaskDto cannot be null");
+        }
         Task task = taskMapper.toEntity(taskDto);
         Task savedTask = taskRepo.save(task);
         return taskMapper.toDto(savedTask);
